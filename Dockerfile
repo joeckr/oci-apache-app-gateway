@@ -5,7 +5,7 @@ FROM $REGISTRY/php:$VERSION-apache-trixie
 RUN rm -rf /var/lib/apt/lists/partial /var/cache/apt/archives/partial && \
     apt-get -o APT::Sandbox::User=root update && \
     apt-get -o APT::Sandbox::User=root upgrade -y && \
-    apt-get -o APT::Sandbox::User=root install -y libapache2-mod-auth-openidc apache2-utils && \
+    apt-get -o APT::Sandbox::User=root --no-install-recommends install -y libapache2-mod-auth-openidc=2.4.17-1+deb13u1 apache2-utils=2.4.69-1~deb13u1 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists
 

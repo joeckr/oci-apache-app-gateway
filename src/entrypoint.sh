@@ -5,7 +5,7 @@ OIDC_CONF="/etc/apache2/conf-enabled/oidc.conf"
 
 if [ "$OIDC_ENABLED" == "true" ]; then
     echo "OIDC is enabled. Generating Apache config..."
-    
+
     REQUIRED_VARS=(
         "OIDC_ISSUER"
         "OIDC_CLIENT_ID"
