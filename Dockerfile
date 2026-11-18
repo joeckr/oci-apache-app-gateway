@@ -2,12 +2,12 @@ ARG VERSION=8.5
 ARG REGISTRY=docker.io/library
 FROM $REGISTRY/php:$VERSION-apache-trixie
 
-RUN rm -rf /var/lib/apt/lists/partial /var/cache/apt/archives/partial && \
+RUN rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/partial && \
     apt-get -o APT::Sandbox::User=root update && \
-    apt-get -o APT::Sandbox::User=root upgrade -y && \
-    apt-get -o APT::Sandbox::User=root --no-install-recommends install -y libapache2-mod-auth-openidc=2.4.17-1+deb13u1 apache2-utils=2.4.69-1~deb13u1 && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists
+    apt-get -o APT::Sandbox::User=root -o Dpkg::Options::=--force-not-root upgrade -y && \
+    apt-get -o APT::Sandbox::User=root -o Dpkg::Options::=--force-not-root --no-install-recommends install -y libapache2-mod-auth-openidc=2.4.* apache2-utils=2.4.* && \
+    apt-get -o APT::Sandbox::User=root clean && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN a2enmod rewrite && \
     a2enmod auth_openidc
