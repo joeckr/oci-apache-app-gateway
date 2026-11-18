@@ -1,23 +1,35 @@
-ARG VERSION=1.31.5
+ARG VERSION=8.5
 ARG REGISTRY=docker.io/library
-FROM $REGISTRY/nginx:$VERSION-alpine
+FROM $REGISTRY/php:$VERSION-apache-trixie
 
-COPY --chmod=755 entrypoint.sh /entrypoint.sh
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY default.conf /etc/nginx/conf.d/default.conf
+RUN rm -rf /var/lib/apt/lists/partial /var/cache/apt/archives/partial && \
+    apt-get -o APT::Sandbox::User=root update && \
+    apt-get -o APT::Sandbox::User=root upgrade -y && \
+    apt-get -o APT::Sandbox::User=root install -y libapache2-mod-auth-openidc apache2-utils && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists
 
-RUN mkdir -p /tmp/nginx/logs /tmp/nginx/client /tmp/nginx/fastcgi /tmp/nginx/proxy /tmp/nginx/scgi /tmp/nginx/uwsgi && \
-    chgrp -R 0 /tmp/nginx /var/cache/nginx && \
-    chmod -R g+rwX /tmp/nginx /var/cache/nginx
+RUN a2enmod rewrite && \
+    a2enmod auth_openidc
 
-WORKDIR /app
+COPY ./src/ports.conf /etc/apache2/ports.conf
 
-RUN chgrp -R 0 /app && \
-    chmod -R g+rwX /app
+RUN rm -rf /var/www/html && \
+    mkdir -p /var/www/html && \
+    chgrp -R 0 /var/www/html && \
+    chmod -R g+rwX /var/www/html
+
+COPY ./src/index.html /var/www/html/index.html
+
+RUN chgrp -R 0 /etc/apache2/conf-enabled/ && \
+    chmod -R g+rwX /etc/apache2/conf-enabled/
 
 EXPOSE 8080
 
-ENTRYPOINT [ "/entrypoint.sh" ]
-CMD [ "nginx", "-g", "daemon off;" ]
+COPY ./src/entrypoint.sh /entrypoint.sh
 
-USER 1031
+RUN chmod +x /entrypoint.sh && \
+    chown 0:0 /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD [ "apache2-foreground" ]
