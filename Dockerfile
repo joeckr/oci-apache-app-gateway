@@ -1,6 +1,4 @@
-ARG VERSION=8.5
-ARG REGISTRY=docker.io/library
-FROM $REGISTRY/php:$VERSION-apache-trixie
+FROM docker.io/library/php:8.5.12-apache-trixie
 
 RUN rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/partial && \
     apt-get -o APT::Sandbox::User=root update && \
