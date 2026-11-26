@@ -36,7 +36,6 @@ This project provides:
 - `src/index.html`: Default landing page served from `/var/www/html/index.html`.
 - `compose.yml`: Local Podman/Docker Compose stack for building and testing the gateway image on port `8080`.
 - `compose.upstream.yml`: Baseline Compose configuration using the unmodified upstream `php:8.5-apache-trixie` image.
-- `versions.json`: Upstream version matrix used by CI release workflows.
 - `mise.toml`: Task runner definitions for local builds, compose workflows, linting, and Trivy security scans.
 - `.github/workflows/`: Automated CI/CD workflows for linting, security auditing, and multi-arch image releases.
 
