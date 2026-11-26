@@ -1,0 +1,39 @@
+app:
+  image: ghcr.io/joeckr/apache
+  name: apache-gateway
+  env:
+    - name: SERVER_NAME
+      value: "local"
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1031
+    seccompProfile:
+      type: RuntimeDefault
+    fsGroup: 1031
+  port: 8080
+  pullPolicy: IfNotPresent
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 250m
+      memory: 256Mi
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+    capabilities:
+      drop:
+        - ALL
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
+    - key: "node-role.kubernetes.io/master"
+      operator: "Exists"
+      effect: "NoSchedule"
+
+service:
+  name: apache-gateway
+  port: 8080
+  type: NodePort
